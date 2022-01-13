@@ -11,7 +11,19 @@ pipeline {
       parallel {
         stage('Testing/Linux ') {
           steps {
-            sh 'sh run_build_script.sh'
+            sh '''#!/bin/bash
+
+build() 
+{
+  local tag="$1"
+  local file="${2:-Dockerfile}"
+  echo -n "building $tag ... "
+  start=`date +%s`
+  docker build -t "$tag" -f "$file" . &> /dev/null
+  end=`date +%s`
+  runtime=$((end-start))
+  echo "done in ${runtime}s"
+}'''
           }
         }
 
